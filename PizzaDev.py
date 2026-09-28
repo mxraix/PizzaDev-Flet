@@ -8,44 +8,30 @@ def main(page: ft.Page):
     instrucao = ft.Text("Monte seu pedido abaixo e clique em 'Enviar pedido' para finalizar.", size=16, weight=ft.FontWeight.NORMAL)
     mensagem = ft.Text("", size=18, weight=ft.FontWeight.BOLD)
 
-    pizzas = [
-        ("Calabresa", "Molho de tomate, muçarela, calabresa e cebola", "R$ 35,00", "R$ 49,00"),
-        ("Margherita", "Molho de tomate, muçarela, tomate e manjericão", "R$ 34,00", "R$ 48,00"),
-        ("Portuguesa", "Molho de tomate, muçarela, presunto, ovo, cebola e azeitona", "R$ 38,00", "R$ 53,00"),
-        ("Frango com Catupiry", "Molho de tomate, frango desfiado e requeijão cremoso", "R$ 39,00", "R$ 55,00"),
-    ]
+    quantidade = ft.TextField(
+        label="Quantidade",
+        keyboard_type=ft.KeyboardType.NUMBER,
+        width=200,
+    )
+    tamanho = ft.RadioGroup(
+        content=ft.Row(
+            controls=[
+                ft.Radio(label="M", value="M"),
+                ft.Radio(label="G", value="G"),
+            ]
+        ),
+        value="M",
+    )
 
-    def selecionar_pizza(sabor):
-        mensagem.value = f"Selecionada: {sabor}"
+    def calcular(e):
+        valor = quantidade.value.strip()
+        if not valor.isdigit() or not 1 <= int(valor) <= 10:
+            mensagem.value = "Informe uma quantidade entre 1 e 10."
+        else:
+            preco = 32 if tamanho.value == "M" else 42
+            parcial = int(valor) * preco
+            mensagem.value = f"Parcial: R$ {parcial},00"
         page.update()
-
-    cartoes = []
-    for sabor, ingredientes, preco_m, preco_g in pizzas:
-        cartoes.append(
-            ft.Container(
-                content=ft.Column(
-                    controls=[
-                        ft.Text(sabor, size=22, weight=ft.FontWeight.BOLD),
-                        ft.Text(ingredientes, size=16),
-                        ft.Row(
-                            controls=[
-                                ft.Text(f"M: {preco_m}"),
-                                ft.Text(f"G: {preco_g}"),
-                            ],
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                        ),
-                        ft.Button(
-                            "Selecionar",
-                            on_click=lambda e, nome=sabor: selecionar_pizza(nome),
-                        ),
-                    ],
-                    spacing=10,
-                ),
-                padding=16,
-                border=ft.border.Border.all(1, ft.Colors.GREY_400),
-                border_radius=8,
-            )
-        )
 
     posicionador = ft.Container(
                 content=ft.Text("Durval C. M. Filho", size=16, weight=ft.FontWeight.NORMAL),
@@ -68,7 +54,18 @@ def main(page: ft.Page):
 
     page.add(
         ft.Column(
-            controls=[nome, slogan, instrucao, mensagem, *cartoes, posicionador],
+            controls=[
+                nome,
+                slogan,
+                instrucao,
+                ft.Text("Pizza Calabresa", size=22, weight=ft.FontWeight.BOLD),
+                ft.Text("M: R$ 32,00   |   G: R$ 42,00"),
+                quantidade,
+                tamanho,
+                ft.Button("Calcular", on_click=calcular),
+                mensagem,
+                posicionador,
+            ],
             spacing=16,
             scroll=ft.ScrollMode.AUTO,
             expand=True,
