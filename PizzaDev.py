@@ -33,15 +33,6 @@ def main(page: ft.Page):
             mensagem.value = f"Parcial: R$ {parcial},00"
         page.update()
 
-    posicionador = ft.Container(
-                content=ft.Text("Durval C. M. Filho", size=16, weight=ft.FontWeight.NORMAL),
-                alignment=ft.Alignment.BOTTOM_LEFT,
-                expand=False,
-                padding=10,
-                border=ft.border.Border.all(1, ft.Colors.GREY_400),
-                                border_radius=8,
-        
-            )
 
     posicionador = ft.Container(
             content=ft.Text("Durval C. M. Filho", size=16, weight=ft.FontWeight.NORMAL),
