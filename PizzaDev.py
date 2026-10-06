@@ -74,29 +74,53 @@ def main(page: ft.Page):
     cartoes = [criar_cartao(pizza) for pizza in pizzas]
 
 
-    posicionador = ft.Container(
-            content=ft.Text("Durval C. M. Filho", size=16, weight=ft.FontWeight.NORMAL),
-            alignment=ft.Alignment.BOTTOM_LEFT,
-            expand=False,
-            padding=10,
+    pizzas = [
+        ("Calabresa", "Molho de tomate, muçarela, calabresa e cebola", "R$ 35,00", "R$ 49,00"),
+        ("Margherita", "Molho de tomate, muçarela, tomate e manjericão", "R$ 34,00", "R$ 48,00"),
+        ("Portuguesa", "Molho de tomate, muçarela, presunto, ovo, cebola e azeitona", "R$ 38,00", "R$ 53,00"),
+        ("Frango com Catupiry", "Molho de tomate, frango desfiado e requeijão cremoso", "R$ 39,00", "R$ 55,00"),
+    ]
+
+    cartoes = [
+        ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Text(sabor, size=22, weight=ft.FontWeight.BOLD),
+                    ft.Text(ingredientes, size=16),
+                    ft.Row(
+                        controls=[
+                            ft.Text(f"M: {preco_m}", size=16, weight=ft.FontWeight.BOLD),
+                            ft.Text(f"G: {preco_g}", size=16, weight=ft.FontWeight.BOLD),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    ),
+                ],
+                spacing=10,
+            ),
+            padding=16,
             border=ft.border.Border.all(1, ft.Colors.GREY_400),
             border_radius=8,
         )
+        for sabor, ingredientes, preco_m, preco_g in pizzas
+    ]
 
-    page.add(
-        ft.Column(
-            controls=[
-                nome,
-                slogan,
-                instrucao,
-                mensagem,
-                *cartoes,
-                posicionador,
-            ],
-            spacing=16,
-            scroll=ft.ScrollMode.AUTO,
-            expand=True,
-        )
+    conteudo = ft.Column(
+        controls=[nome, slogan, instrucao, *cartoes],
+        spacing=16,
+        scroll=ft.ScrollMode.AUTO,
+        expand=True,
     )
+
+    posicionador = ft.Container(
+            content=ft.Text("Durval C. M. Filho.", size=16, weight=ft.FontWeight.NORMAL),
+            alignment=ft.Alignment.BOTTOM_LEFT,
+            expand=False,
+            padding=16,
+                        border=ft.border.Border.all(1, ft.Colors.GREY_400),
+                        border_radius=8,
+    
+        )
+
+    page.add(conteudo, posicionador)
 
 ft.run(main)
