@@ -5,122 +5,105 @@ def main(page: ft.Page):
 
     nome = ft.Text("PizzaDev Pizzaria", size=32, weight=ft.FontWeight.BOLD)
     slogan = ft.Text("Sempre quentinha na sua mesa!", size=20, italic=True, weight=ft.FontWeight.NORMAL)
-    instrucao = ft.Text("Monte seu pedido abaixo e clique em 'Enviar pedido' para finalizar.", size=16, weight=ft.FontWeight.NORMAL)
-    mensagem = ft.Text("", size=18, weight=ft.FontWeight.BOLD)
+    estado = {"pizza": None, "tamanho": None}
+    area_central = ft.Container(expand=True, padding=20)
 
-    pizzas = [
-        {
-            "nome": "Calabresa",
-            "ingredientes": "Molho de tomate, muçarela, calabresa e cebola",
-            "preco_m": 32.00,
-            "preco_g": 42.00,
-        },
-        {
-            "nome": "Margherita",
-            "ingredientes": "Molho de tomate, muçarela, tomate e manjericão",
-            "preco_m": 34.00,
-            "preco_g": 48.00,
-        },
-        {
-            "nome": "Portuguesa",
-            "ingredientes": "Molho de tomate, muçarela, presunto, ovo, cebola e azeitona",
-            "preco_m": 38.00,
-            "preco_g": 53.00,
-        },
-        {
-            "nome": "Frango com Catupiry",
-            "ingredientes": "Molho de tomate, frango desfiado e requeijão cremoso",
-            "preco_m": 39.00,
-            "preco_g": 55.00,
-        },
-        {
-            "nome": "Pizza Temporária",
-            "ingredientes": "Molho de tomate, muçarela e manjericão",
-            "preco_m": 30.00,
-            "preco_g": 44.00,
-        },
-    ]
-
-    def selecionar_pizza(e):
-        mensagem.value = f"Selecionada: {e.control.data}"
+    def mostrar_tela(conteudo):
+        area_central.content = conteudo
         page.update()
 
-    def criar_cartao(pizza):
-        return ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Text(pizza["nome"], size=22, weight=ft.FontWeight.BOLD),
-                    ft.Text(pizza["ingredientes"], size=16),
+    def mostrar_inicio(_=None):
+        mostrar_tela(
+            ft.Column(
+                [
+                    ft.Text("Início", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text("Monte sua pizza escolhendo o sabor e o tamanho."),
+                    ft.Button("Avançar", on_click=mostrar_cardapio),
+                ],
+                spacing=16,
+            )
+        )
+
+    def mostrar_cardapio(_=None):
+        mostrar_tela(
+            ft.Column(
+                [
+                    ft.Text("Cardápio", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text("Calabresa • Marguerita • Quatro queijos"),
                     ft.Row(
-                        controls=[
-                            ft.Text(f"M: R$ {pizza['preco_m']:.2f}"),
-                            ft.Text(f"G: R$ {pizza['preco_g']:.2f}"),
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    ),
-                    ft.Button(
-                        "Selecionar",
-                        data=pizza["nome"],
-                        on_click=selecionar_pizza,
+                        [
+                            ft.Button("Voltar", on_click=mostrar_inicio),
+                            ft.Button("Avançar", on_click=mostrar_selecao),
+                        ]
                     ),
                 ],
-                spacing=10,
-            ),
-            padding=16,
-            border=ft.border.Border.all(1, ft.Colors.GREY_400),
-            border_radius=8,
+                spacing=16,
+            )
         )
 
-    cartoes = [criar_cartao(pizza) for pizza in pizzas]
+    def selecionar_pizza(pizza):
+        estado["pizza"] = pizza
+        mostrar_selecao()
 
+    def selecionar_tamanho(tamanho):
+        estado["tamanho"] = tamanho
+        mostrar_selecao()
 
-    pizzas = [
-        ("Calabresa", "Molho de tomate, muçarela, calabresa e cebola", "R$ 35,00", "R$ 49,00"),
-        ("Margherita", "Molho de tomate, muçarela, tomate e manjericão", "R$ 34,00", "R$ 48,00"),
-        ("Portuguesa", "Molho de tomate, muçarela, presunto, ovo, cebola e azeitona", "R$ 38,00", "R$ 53,00"),
-        ("Frango com Catupiry", "Molho de tomate, frango desfiado e requeijão cremoso", "R$ 39,00", "R$ 55,00"),
-    ]
-
-    cartoes = [
-        ft.Container(
-            content=ft.Column(
-                controls=[
-                    ft.Text(sabor, size=22, weight=ft.FontWeight.BOLD),
-                    ft.Text(ingredientes, size=16),
+    def mostrar_selecao(_=None):
+        pizza_atual = estado["pizza"] or "Nenhuma pizza selecionada"
+        tamanho_atual = estado["tamanho"] or "Nenhum tamanho selecionado"
+        mostrar_tela(
+            ft.Column(
+                [
+                    ft.Text("Seleção", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Pizza guardada: {pizza_atual}"),
                     ft.Row(
-                        controls=[
-                            ft.Text(f"M: {preco_m}", size=16, weight=ft.FontWeight.BOLD),
-                            ft.Text(f"G: {preco_g}", size=16, weight=ft.FontWeight.BOLD),
+                        [
+                            ft.Button("Calabresa", on_click=lambda _: selecionar_pizza("Calabresa")),
+                            ft.Button("Marguerita", on_click=lambda _: selecionar_pizza("Marguerita")),
+                            ft.Button("Quatro queijos", on_click=lambda _: selecionar_pizza("Quatro queijos")),
                         ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        wrap=True,
+                    ),
+                    ft.Text(f"Tamanho: {tamanho_atual}"),
+                    ft.Row(
+                        [
+                            ft.Button("Pequena", on_click=lambda _: selecionar_tamanho("Pequena")),
+                            ft.Button("Média", on_click=lambda _: selecionar_tamanho("Média")),
+                            ft.Button("Grande", on_click=lambda _: selecionar_tamanho("Grande")),
+                        ],
+                        wrap=True,
+                    ),
+                    ft.Row(
+                        [
+                            ft.Button("Voltar", on_click=mostrar_cardapio),
+                            ft.Button("Avançar", on_click=mostrar_resumo),
+                        ]
                     ),
                 ],
-                spacing=10,
-            ),
-            padding=16,
-            border=ft.border.Border.all(1, ft.Colors.GREY_400),
-            border_radius=8,
-        )
-        for sabor, ingredientes, preco_m, preco_g in pizzas
-    ]
-
-    conteudo = ft.Column(
-        controls=[nome, slogan, instrucao, *cartoes],
-        spacing=16,
-        scroll=ft.ScrollMode.AUTO,
-        expand=True,
-    )
-
-    posicionador = ft.Container(
-            content=ft.Text("Durval C. M. Filho.", size=16, weight=ft.FontWeight.NORMAL),
-            alignment=ft.Alignment.BOTTOM_LEFT,
-            expand=False,
-            padding=16,
-                        border=ft.border.Border.all(1, ft.Colors.GREY_400),
-                        border_radius=8,
-    
+                spacing=16,
+            )
         )
 
-    page.add(conteudo, posicionador)
+    def mostrar_resumo(_=None):
+        mostrar_tela(
+            ft.Column(
+                [
+                    ft.Text("Resumo do pedido", size=24, weight=ft.FontWeight.BOLD),
+                    ft.Text(f"Pizza: {estado['pizza'] or 'Não selecionada'}"),
+                    ft.Text(f"Tamanho: {estado['tamanho'] or 'Não selecionado'}"),
+                    ft.Row(
+                        [
+                            ft.Button("Voltar", on_click=mostrar_selecao),
+                            ft.Button("Início", on_click=mostrar_inicio),
+                        ]
+                    ),
+                ],
+                spacing=16,
+            )
+        )
+
+    page.add(nome, slogan, area_central)
+    mostrar_inicio()
 
 ft.run(main)
